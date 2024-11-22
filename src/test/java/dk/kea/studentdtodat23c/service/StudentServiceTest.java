@@ -29,13 +29,12 @@ class StudentServiceTest {
     @Mock
     private StudentRepository mockedStudentRepository;
 
-    //autowired dependencies in studentservice does not initialise when using InjectMocks
-    //@InjectMocks
     StudentService studentService;
 
 
     @BeforeEach
     void init(){
+        //Arrange Mock behaviors
         Student s1 = new Student();
         s1.setId(1L);
         s1.setName("Sigurd");
@@ -83,13 +82,14 @@ class StudentServiceTest {
                 }
             }
         });
-        //inject mocked repository and other dependencies in studentService
+        //inject mocked repository
         studentService = new StudentService(mockedStudentRepository);
 
     }
 
     @Test
     void getAllStudents() {
+        //Arrange Mock is handled in @BeforeEach
         //Act
         List<StudentResponseDTO> studentDTOList = studentService.getAllStudents();
         //Assert
@@ -99,16 +99,19 @@ class StudentServiceTest {
 
     @Test
     void getStudentById() {
-        //Act
+        //Arrange Mock is handled in @BeforeEach
+        // Act
         StudentResponseDTO studentDTO = studentService.getStudentById(1L);
         //Assert
         assertEquals("Sigurd", studentDTO.name());
+        //Act & Assert for non-existing student
         assertThrows(RuntimeException.class, () -> studentService.getStudentById(42L));
     }
 
     @Test
     void createStudent() {
-        //kald studentService.save og assertEquals på studentDTO - husk init Mockito.when.thenReturn
+        //Arrange Mock is handled in @BeforeEach
+        //Arrange & Act
         StudentResponseDTO resultStudentDTO = studentService.createStudent(
                 new StudentRequestDTO(
                         "Hugo",
@@ -116,28 +119,32 @@ class StudentServiceTest {
                         LocalDate.of(2000,1,1),
                         LocalTime.of(0, 0, 1)
                 ));
+        //Assert
         assertEquals("Hugo", resultStudentDTO.name());
     }
 
     @Test
     void updateStudent() {
-        //kald studentService.save og assertEquals på studentDTO - husk init Mockito.when.thenReturn
-        //lav test for eksisterende og ikke eksisterende student (assertThrows)
+        //Arrange Mock is handled in @BeforeEach
+        //Arrange
         StudentRequestDTO studentRequestDTO = new StudentRequestDTO(
                 "Hugo",
                 "Secret",
                         LocalDate.of(2000,1,1),
                         LocalTime.of(0, 0, 1));
+        //Act
         StudentResponseDTO resultStudentDTO = studentService.updateStudent(1L,  studentRequestDTO);
+        //Assert
         assertEquals(1, resultStudentDTO.id());
         assertEquals("Hugo", resultStudentDTO.name());
+        //Act & Assert for non-existing student
         assertThrows(RuntimeException.class, () -> studentService.updateStudent(42L, studentRequestDTO));
     }
 
     @Test
     void deleteStudentById() {
-        //kald studentService.delete
-        //test at der kommer StudentNotFoundException for ikke-eksisterende student
+        //Arrange Mock is handled in @BeforeEach
+        //Act & Assert
         assertThrows(RuntimeException.class, () -> studentService.deleteStudent(42L));
     }
 }
