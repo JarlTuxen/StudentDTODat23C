@@ -42,4 +42,38 @@ class StudentRepositoryTest {
         assertEquals(2, students.size());
     }
 
+    @Test
+    void testFindById() {
+        Student student = studentRepository.findById(1L).get();
+        assertEquals("Anders", student.getName());
+    }
+
+    @Test
+    void testSave() {
+        Student student = new Student();
+        student.setName("Anders");
+        student.setPassword("password");
+        student.setBornDate(LocalDate.of(2020, 1, 1));
+        student.setBornTime(LocalTime.of(12, 00));
+        Student savedStudent = studentRepository.save(student);
+        assertEquals("Anders", savedStudent.getName());
+    }
+
+    @Test
+    void testUpdate() {
+        Student student = studentRepository.findById(1L).get();
+        student.setName("Charlie");
+        Student updatedStudent = studentRepository.save(student);
+        assertEquals("Charlie", updatedStudent.getName());
+    }
+
+    @Test
+    void testDelete() {
+        studentRepository.deleteById(1L);
+        //List<Student> students = studentRepository.findAll();
+        //assertEquals(1, students.size());
+
+        assertFalse(studentRepository.existsById(1L));
+
+    }
 }
